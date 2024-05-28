@@ -19,10 +19,11 @@ import java.time.Instant;
 public class TokenController {
     private final JwtEncoder jwtEncoder;
     private final UserRepository userRepository;
-
     private BCryptPasswordEncoder passwordEncoder;
 
-    public TokenController(JwtEncoder jwtEncoder, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public TokenController(JwtEncoder jwtEncoder,
+                           UserRepository userRepository,
+                            BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.jwtEncoder = jwtEncoder;
         this.userRepository = userRepository;
         this.passwordEncoder = bCryptPasswordEncoder;
@@ -33,7 +34,7 @@ public class TokenController {
 
         var user = userRepository.findByUsername(loginRequest.username());
 
-        if(user.isEmpty() || user.get().isLoginCorrect(loginRequest, passwordEncoder)){
+        if(user.isEmpty() || !user.get().isLoginCorrect(loginRequest, passwordEncoder)){
             throw new BadCredentialsException("User or password is invalid!");
         }
         var now = Instant.now();
