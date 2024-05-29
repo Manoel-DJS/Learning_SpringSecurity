@@ -2,11 +2,10 @@ package tech.buildrun.springsecurity.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tech.buildrun.springsecurity.controller.dto.CreateUserDto;
 import tech.buildrun.springsecurity.entities.Role;
@@ -14,6 +13,7 @@ import tech.buildrun.springsecurity.entities.User;
 import tech.buildrun.springsecurity.repository.RoleRepository;
 import tech.buildrun.springsecurity.repository.UserRepository;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -50,4 +50,14 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/users")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<List<User>> listUsers(){
+        var users = userRepository.findAll();
+
+        return ResponseEntity.ok(users);
+    }
+
+
 }
