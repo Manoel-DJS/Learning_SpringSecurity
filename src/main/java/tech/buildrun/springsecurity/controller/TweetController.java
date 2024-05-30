@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tech.buildrun.springsecurity.controller.dto.CreateTweetDto;
+import tech.buildrun.springsecurity.entities.Role;
 import tech.buildrun.springsecurity.entities.Tweet;
 import tech.buildrun.springsecurity.repository.TweetRepository;
 import tech.buildrun.springsecurity.repository.UserRepository;
@@ -40,11 +41,16 @@ public class TweetController {
 
     @DeleteMapping("/tweets/{id}")
     public ResponseEntity<Void> deleteTweet(@PathVariable("id") Long tweetId, JwtAuthenticationToken token){
+        // User admin com permissão para deletar tudo
+        var user = userRepository.findById(UUID.fromString(token.getName()));
 
         var tweet = tweetRepository.findById(tweetId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(tweet.getUser().getUserId().equals(UUID.fromString(token.getName()))){
+        var isAdmin = user.get().getRoles()
+                .stream().anyMatch(role -> role.getName().equalsIgnoreCase(Role.Values.ADMIN.name()));
+
+        if(isAdmin || tweet.getUser().getUserId().equals(UUID.fromString(token.getName()))){
             tweetRepository.deleteById(tweetId);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
