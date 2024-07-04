@@ -6,6 +6,7 @@ target/
 
 src/main/resources/app.key
 src/main/resources/app.pub
+Spring Security
 
 ### STS ###
 .apt_generated

@@ -39,6 +39,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/users").hasAuthority("SCOPE_admin")
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable()) //desativar apenas/ONLY/SOMENTE localmente a fins de teste
